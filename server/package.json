@@ -15,7 +15,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "openai": "^6.45.0",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "serpapi": "^2.2.1"
   },
   "devDependencies": {
     "jest": "^30.4.2",

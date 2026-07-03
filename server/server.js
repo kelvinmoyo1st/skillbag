@@ -9,6 +9,7 @@ app.use(cors())
 app.use(express.json());
 app.use('/api/profiles', require('./routes/profiles'));
 app.use('/api/mentors', require('./routes/mentors'));
+app.use('/api/quiz', require('./routes/quiz'));
 const errorHandler = require('./middleware/errorHandler');
 // ... all your other app.use() and routes above ...
 app.use((req, res) => {

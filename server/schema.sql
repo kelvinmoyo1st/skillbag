@@ -19,3 +19,12 @@ CREATE TABLE IF NOT EXISTS skill_profiles (
                             remind_at TIMESTAMP NOT NULL,
                               sent BOOLEAN DEFAULT FALSE
                               );
+                    CREATE TABLE IF NOT EXISTS quiz_results (
+                        id SERIAL PRIMARY KEY,
+                          profile_id INTEGER REFERENCES skill_profiles(id) ON DELETE CASCADE,
+                            score INTEGER NOT NULL,
+                              total INTEGER NOT NULL,
+                                answers JSONB,
+                                  created_at TIMESTAMP DEFAULT NOW()
+                                  );
+                    

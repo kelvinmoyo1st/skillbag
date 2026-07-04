@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const pool = require('./db')
+const startReminderCron = require('./cron');
 
 const app = express()
 
@@ -29,11 +30,13 @@ app.get('/health', async (req, res) => {
 
                   const PORT = process.env.PORT || 3000
 
-                  if (require.main === module) {
-                      app.listen(3000, () => {
-                          console.log('Server running on port 3000');
-                            });
-                            }
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log('Server running on port 3000');
+    startReminderCron();
+  });
+}
+
+                            
 
                             module.exports = app;
-                  

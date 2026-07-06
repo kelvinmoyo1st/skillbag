@@ -49,27 +49,26 @@ function ProfileDetail() {
   }
 
   if (loading) return <p>Loading profile...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+  if (error) return <p style={{ color: 'var(--danger)' }}>Error: {error}</p>;
   if (!profile) return <p>Profile not found.</p>;
 
   return (
     <div>
-      <Link to="/">&larr; Back to Dashboard</Link>
+      <Link to="/">&larr; Dashboard</Link>
       <h1>{profile.name}</h1>
-      <p>Goal: {profile.goal}</p>
+      <p className="goal-line">Goal: {profile.goal}</p>
 
-      <div style={{ margin: '1rem 0' }}>
-        <Link to={`/profiles/${id}/mentors`} style={{ marginRight: '1rem' }}>Find Mentors</Link>
+      <div className="action-links">
+        <Link to={`/profiles/${id}/mentors`}>Find Mentors</Link>
         <Link to={`/profiles/${id}/quiz`}>Take Quiz</Link>
       </div>
 
       <h2>Progress Log</h2>
-      <form onSubmit={handleAddLog}>
+      <form onSubmit={handleAddLog} className="inline-form">
         <input
           placeholder="What did you practice today?"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          style={{ width: '60%' }}
         />
         <button type="submit" disabled={submitting}>
           {submitting ? 'Saving...' : 'Add Entry'}
@@ -77,12 +76,15 @@ function ProfileDetail() {
       </form>
 
       {logs.length === 0 ? (
-        <p>No log entries yet.</p>
+        <p className="empty-state">No entries yet — log your first practice session above.</p>
       ) : (
-        <ul>
+        <ul className="log-list">
           {logs.map((log) => (
-            <li key={log.id}>
-              {new Date(log.created_at).toLocaleString()} — {log.note}
+            <li key={log.id} className="log-entry">
+              <span className="log-date mono">
+                {new Date(log.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+              </span>
+              <span className="log-note">{log.note}</span>
             </li>
           ))}
         </ul>

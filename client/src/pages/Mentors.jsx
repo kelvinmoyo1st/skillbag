@@ -26,25 +26,25 @@ function Mentors() {
 
   return (
     <div>
-      <Link to={`/profiles/${id}`}>&larr; Back to Profile</Link>
+      <Link to={`/profiles/${id}`}>&larr; Profile</Link>
       <h1>Mentors & Resources</h1>
 
       {loading && <p>Searching for mentors and resources...</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {error && <p style={{ color: 'var(--danger)' }}>Error: {error}</p>}
 
       {!loading && !error && results.length === 0 && (
-        <p>No results found.</p>
+        <p className="empty-state">No results found.</p>
       )}
 
       {!loading && !error && results.length > 0 && (
-        <ul>
+        <div className="mentor-list">
           {results.map((r, i) => (
-            <li key={i} style={{ marginBottom: '1rem' }}>
-              <a href={r.link} target="_blank" rel="noreferrer">{r.title}</a>
-              <p>{r.snippet}</p>
-            </li>
+            <a href={r.link} target="_blank" rel="noreferrer" key={i} className="mentor-card">
+              <span className="mentor-title">{r.title}</span>
+              <p className="mentor-snippet">{r.snippet}</p>
+            </a>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

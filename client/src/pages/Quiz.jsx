@@ -50,10 +50,10 @@ function Quiz() {
 
   return (
     <div>
-      <Link to={`/profiles/${id}`}>&larr; Back to Profile</Link>
+      <Link to={`/profiles/${id}`}>&larr; Profile</Link>
       <h1>Review Quiz</h1>
 
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {error && <p style={{ color: 'var(--danger)' }}>Error: {error}</p>}
 
       {!questions && !result && (
         <button onClick={handleGenerate} disabled={loading}>
@@ -64,19 +64,22 @@ function Quiz() {
       {questions && !result && (
         <div>
           {questions.map((q, i) => (
-            <div key={i} style={{ marginBottom: '1.5rem' }}>
-              <p><strong>{i + 1}. {q.question}</strong></p>
-              {q.options.map((opt, oi) => (
-                <label key={oi} style={{ display: 'block' }}>
-                  <input
-                    type="radio"
-                    name={`q-${i}`}
-                    checked={answers[i] === LETTERS[oi]}
-                    onChange={() => handleSelect(i, LETTERS[oi])}
-                  />
-                  {' '}{LETTERS[oi]}. {opt}
-                </label>
-              ))}
+            <div className="quiz-question" key={i}>
+              <p className="quiz-question-text">{i + 1}. {q.question}</p>
+              <div className="quiz-options">
+                {q.options.map((opt, oi) => (
+                  <label key={oi} className="quiz-option">
+                    <input
+                      type="radio"
+                      name={`q-${i}`}
+                      checked={answers[i] === LETTERS[oi]}
+                      onChange={() => handleSelect(i, LETTERS[oi])}
+                    />
+                    <span className="mono quiz-letter">{LETTERS[oi]}</span>
+                    {opt}
+                  </label>
+                ))}
+              </div>
             </div>
           ))}
           <button onClick={handleSubmit} disabled={!allAnswered || loading}>
@@ -86,8 +89,8 @@ function Quiz() {
       )}
 
       {result && (
-        <div>
-          <h2>Score: {result.score} / {result.total}</h2>
+        <div className="quiz-result">
+          <span className="quiz-score mono">{result.score} / {result.total}</span>
           <button onClick={() => { setQuestions(null); setResult(null); }}>
             Take Another Quiz
           </button>

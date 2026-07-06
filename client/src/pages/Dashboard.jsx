@@ -4,11 +4,13 @@ import { api } from '../api';
 
 function Dashboard() {
   const [profiles, setProfiles] = useState([]);
+  const [logCounts, setLogCounts] = useState({});
   const [dueReminders, setDueReminders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [name, setName] = useState('');
   const [goal, setGoal] = useState('');
+  const [creating, setCreating] = useState(false);
 
   async function loadDashboard() {
     setLoading(true);
@@ -17,13 +19,18 @@ function Dashboard() {
       const profileList = await api.getProfiles();
       setProfiles(profileList);
 
-      // gather due reminders across all profiles
       const allDue = [];
+      const counts = {};
       for (const profile of profileList) {
-        const due = await api.getDueReminders(profile.id);
+        const [due, logs] = await Promise.all([
+          api.getDueReminders(profile.id),
+          api.getLogs(profile.id)
+        ]);
         due.forEach((r) => allDue.push({ ...r, profileName: profile.name }));
+        counts[profile.id] = logs.length;
       }
       setDueReminders(allDue);
+      setLogCounts(counts);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -38,6 +45,7 @@ function Dashboard() {
   async function handleCreate(e) {
     e.preventDefault();
     if (!name.trim()) return;
+    setCreating(true);
     try {
       await api.createProfile({ name, goal });
       setName('');
@@ -45,19 +53,21 @@ function Dashboard() {
       loadDashboard();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setCreating(false);
     }
   }
 
   if (loading) return <p>Loading dashboard...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+  if (error) return <p style={{ color: 'var(--danger)' }}>Error: {error}</p>;
 
   return (
     <div>
-      <h1>SkillBag Dashboard</h1>
+      <h1>Dashboard</h1>
 
       {dueReminders.length > 0 && (
-        <div style={{ background: '#fff3cd', padding: '1rem', marginBottom: '1rem', borderRadius: '4px' }}>
-          <strong>Due Reminders</strong>
+        <div className="reminder-banner">
+          <strong>Due reminders</strong>
           <ul>
             {dueReminders.map((r) => (
               <li key={r.id}>{r.profileName}: {r.message}</li>
@@ -67,16 +77,20 @@ function Dashboard() {
       )}
 
       <h2>Skill Profiles</h2>
-      <ul>
+      <div className="profile-list">
         {profiles.map((p) => (
-          <li key={p.id}>
-            <Link to={`/profiles/${p.id}`}>{p.name}</Link> — {p.goal}
-          </li>
+          <Link to={`/profiles/${p.id}`} key={p.id} className="profile-card">
+            <div>
+              <span className="profile-name">{p.name}</span>
+              <span className="profile-goal">{p.goal}</span>
+            </div>
+            <span className="badge">{logCounts[p.id] ?? 0} entries</span>
+          </Link>
         ))}
-      </ul>
+      </div>
 
-      <h3>Add a New Skill</h3>
-      <form onSubmit={handleCreate}>
+      <h2>Add a New Skill</h2>
+      <form onSubmit={handleCreate} className="inline-form">
         <input
           placeholder="Skill name"
           value={name}
@@ -87,7 +101,9 @@ function Dashboard() {
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
         />
-        <button type="submit">Create</button>
+        <button type="submit" disabled={creating}>
+          {creating ? 'Creating...' : 'Create'}
+        </button>
       </form>
     </div>
   );

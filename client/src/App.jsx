@@ -7,10 +7,10 @@ import Quiz from './pages/Quiz';
 function App() {
   return (
     <BrowserRouter>
-      <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
-        <Link to="/" style={{ marginRight: '1rem' }}>Dashboard</Link>
-      </nav>
-      <div style={{ padding: '1rem' }}>
+      <div className="nav">
+        <Link to="/" className="nav-brand">SkillBag</Link>
+      </div>
+      <div className="app-shell">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profiles/:id" element={<ProfileDetail />} />
